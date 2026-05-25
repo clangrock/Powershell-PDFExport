@@ -1,3 +1,19 @@
+# define script folder
+$scriptFolder = $PSScriptRoot
+
+# define functions 
+$fFunction1 = join-Path $scriptFolder "openFolder.ps1"
+
+#load powershell functions
+."$fFunction1"
+
+# select folder
+#The starting folder to analyze
+$startFolder = Get-SHDOpenFolderDialog -Title "Select the root folder for the Table of Contents"
+
+Set-Location -Path $startFolder
+
+
 # This script uses PowerShell modules and functions to convert various file types to PDF
 function Convert-OfficeToPDF {
     [CmdletBinding()]
@@ -97,7 +113,7 @@ function Convert-OfficeToPDF {
                         }
                         
                         $workbook = $excelApp.Workbooks.Open($file.FullName)
-                        $workbook.ExportAsFixedFormat(1, $outputFile) # 1 = xlTypePDF
+                        $workbook.ExportAsFixedFormat($xlFixedFormat::xlTypePDF, $outputFile)
                         $workbook.Close($false)
                         $success = $true
                         break
@@ -203,6 +219,9 @@ function Convert-OfficeToPDF {
         $wordApp = $excelApp = $powerpointApp = $null
     }
 }
+
+Convert-OfficeToPDF -FolderPath $startFolder
+
 
 # Example usage:
 # Convert-OfficeToPDF -FolderPath "E:\ExternalCertificatesWEBARCHIVEToPDF" -IncludeSubfolders
